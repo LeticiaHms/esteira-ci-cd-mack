@@ -1,4 +1,4 @@
-name: Auto PR and Merge
+name: "2. Automação de PR & Merge"
 
 on:
   push:

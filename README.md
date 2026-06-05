@@ -1,68 +1,43 @@
 # Esteira CI/CD Automatizada - Projeto DevOps
 
-Este repositório contém um exemplo prático de uma esteira de **Integração Contínua (CI)** e **Entrega Contínua (CD)** utilizando GitHub Actions para automatizar o deploy de um site estático no GitHub Pages.
+Este repositório contém uma esteira completa de **Integração Contínua (CI)**, **Automação de Processos** e **Entrega Contínua (CD)**.
 
-## 🚀 Tecnologias Utilizadas
+## 🏗️ Arquitetura da Esteira
 
-*   **HTML5/CSS3**: Estrutura e estilo do site.
-*   **Git/GitHub**: Controle de versão e hospedagem do código.
-*   **GitHub Actions**: Automação dos pipelines de CI e CD.
-*   **HTMLHint**: Validação de qualidade e sintaxe do código HTML.
-*   **GitHub Pages**: Hospedagem automatizada do site.
+O pipeline está dividido em três fases lógicas para garantir organização e visibilidade:
 
-## 🏗️ Arquitetura do Pipeline
+### 1. 🛡️ Integração Contínua (CI)
+*   **Frequência**: Disparado em cada push para `main` ou Pull Requests.
+*   **Ações**: Valida estrutura de arquivos, executa Linting de HTML (qualidade de código) e gera artefatos de build.
 
-O projeto utiliza dois workflows desacoplados:
+### 2. 🤖 Automação de PR & Merge
+*   **Frequência**: Disparado ao criar branches do tipo `feature/*`, `fix/*` ou `hotfix/*`.
+*   **Ações**: Cria automaticamente uma Pull Request para a `main` e ativa o **Auto-Merge**. 
+*   **Vantagem**: O desenvolvedor foca no código, e a esteira cuida da burocracia do GitHub.
 
-1.  **CI Pipeline (`ci.yml`)**:
-    *   Disparado em cada `push` ou `pull_request` para a branch `main`.
-    *   **Jobs**:
-        *   `validate`: Realiza o checkout, verifica a existência dos arquivos, valida a sintaxe HTML (Linting) e gera um artefato (`site-build`).
-
-2.  **CD Pipeline (`cd.yml`)**:
-    *   Disparado automaticamente após o sucesso do **CI Pipeline**.
-    *   **Jobs**:
-        *   `deploy`: Faz o download do artefato validado e realiza o deploy para o GitHub Pages utilizando as APIs oficiais do GitHub.
+### 3. 🚀 Entrega Contínua (CD)
+*   **Frequência**: Disparado automaticamente após o sucesso da fase de CI.
+*   **Ações**: Realiza o deploy automático do site validado para o **GitHub Pages**.
 
 ## 📂 Estrutura do Projeto
 
 ```text
 esteira-ci-cd/
-├── site/               # Arquivos do site estático
-│   └── index.html      # Página principal
+├── site/               # Código fonte do site estático
 ├── .github/
 │   └── workflows/      # Definições dos pipelines
-│       ├── ci.yml      # Pipeline de Integração Contínua
-│       └── cd.yml      # Pipeline de Entrega Contínua
-└── README.md           # Documentação do projeto
+│       ├── ci.yml              # Fase 1: Validação e Build
+│       ├── automation-pr.yml   # Fase 2: Automação de PR
+│       └── cd.yml              # Fase 3: Deploy para Produção
+└── README.md           # Documentação
 ```
 
-## 🛠️ Como Utilizar
+## 🛠️ Configuração Necessária
 
-### 1. Preparação
-Certifique-se de que o GitHub Pages está configurado para usar GitHub Actions:
-*   Vá em **Settings** > **Pages**.
-*   Em **Build and deployment** > **Source**, selecione **GitHub Actions**.
-
-### 2. Executando o Pipeline
-Basta realizar um push para a branch `main`:
-
-```bash
-git add .
-git commit -m "docs: adiciona readme e melhorias no ci"
-git push origin main
-```
-
-### 3. Monitoramento
-*   Acompanhe o progresso na aba **Actions** do seu repositório.
-*   O CI validará o código e, se aprovado, o CD fará o deploy.
-*   A URL final será exibida nos logs do job de deploy.
-
-## ✅ Melhorias Implementadas
-
-*   **Validação de Sintaxe (Linting)**: Adicionado `htmlhint` ao CI para garantir que o código HTML esteja livre de erros estruturais.
-*   **Artefatos Versionados**: Uso de artefatos para garantir que o código testado seja o mesmo código implantado.
-*   **Segurança**: Configuração de permissões mínimas (`permissions`) no workflow de CD.
+Para que a automação funcione 100%, verifique:
+1.  **Settings > Actions > General**: Habilite *"Allow GitHub Actions to create and approve pull requests"*.
+2.  **Settings > Pages**: Mude o *Source* para *"GitHub Actions"*.
+3.  **Settings > General**: Habilite *"Allow auto-merge"*.
 
 ---
 Projeto desenvolvido para fins educacionais em DevOps.
