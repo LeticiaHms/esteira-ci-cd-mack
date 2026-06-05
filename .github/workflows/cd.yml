@@ -1,0 +1,45 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Download do artefato gerado pelo CI
+        uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: site-downloaded
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Preparar conteúdo para publicação
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site-downloaded/
+
+      - name: Realizar deploy automático
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Exibir URL publicada nos logs
+        run: |
+          echo "Deploy realizado com sucesso!"
+          echo "URL: ${{ steps.deployment.outputs.page_url }}"
