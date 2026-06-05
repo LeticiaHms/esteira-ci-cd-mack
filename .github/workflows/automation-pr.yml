@@ -41,10 +41,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Ativando Auto-Merge para: ${{ steps.create_pr.outputs.pr_url }}"
-          gh pr merge "${{ steps.create_pr.outputs.pr_url }}" --auto --merge
+          echo "Tentando ativar Auto-Merge para: ${{ steps.create_pr.outputs.pr_url }}"
+          gh pr merge "${{ steps.create_pr.outputs.pr_url }}" --auto --merge || echo ":::warning:: Auto-merge não pôde ser ativado automaticamente. Verifique se 'Allow auto-merge' está habilitado em Settings > General."
           
           echo "### Resumo da Automação 🚀" >> $GITHUB_STEP_SUMMARY
           echo "- **PR:** ${{ steps.create_pr.outputs.pr_url }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status:** Auto-merge ativado com sucesso!" >> $GITHUB_STEP_SUMMARY
-          echo "- **Ação:** A branch será mesclada assim que o CI passar." >> $GITHUB_STEP_SUMMARY
+          echo "- **Ação:** A PR foi criada. Se o auto-merge falhou, realize o merge manual após o CI passar." >> $GITHUB_STEP_SUMMARY

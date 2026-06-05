@@ -2,7 +2,11 @@ name: "1. Integração Contínua (CI)"
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - 'feature/*'
+      - 'fix/*'
+      - 'hotfix/*'
   pull_request:
     branches: [ main ]
 
