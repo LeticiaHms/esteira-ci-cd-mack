@@ -31,6 +31,12 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Preparar conteúdo para publicação
+        run: |
+          # Se você tiver um domínio, substitua 'seu-dominio.com' pelo seu domínio real.
+          # Se não tiver um, este passo pode ser removido ou comentado.
+          # echo "seu-dominio.com" > site-downloaded/CNAME
+          
+      - name: Upload para o GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: site-downloaded/
