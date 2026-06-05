@@ -23,13 +23,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Tenta criar a PR. Se já existir, o comando falhará mas o script continuará.
-          gh pr create \
-            --title "[Auto PR] Mesclar ${{ github.ref_name }} em main" \
-            --body "Esta é uma Pull Request gerada automaticamente pelo pipeline de CI/CD. Origem: ${{ github.ref_name }} -> Destino: main." \
-            --base main \
-            --head ${{ github.ref_name }} \
-            --label "automated pr,automerge" || echo "PR já existe ou não pôde ser criada."
+          # Verifica se já existe uma PR aberta para esta branch
+          PR_URL=$(gh pr list --head "${{ github.ref_name }}" --base main --state open --json url --jq '.[0].url')
+
+          if [ -z "$PR_URL" ]; then
+            echo "Criando nova Pull Request..."
+            gh pr create \
+              --title "[Auto PR] Mesclar ${{ github.ref_name }} em main" \
+              --body "Esta é uma Pull Request gerada automaticamente pelo pipeline de CI/CD. Origem: ${{ github.ref_name }} -> Destino: main." \
+              --base main \
+              --head ${{ github.ref_name }} || echo "Não foi possível criar a PR (pode já existir)."
+          else
+            echo "Pull Request já existe: $PR_URL"
+          fi
 
           # Ativa o auto-merge para a PR desta branch
-          gh pr merge ${{ github.ref_name }} --auto --merge || echo "Auto-merge não pôde ser ativado."
+          echo "Ativando Auto-Merge..."
+          gh pr merge ${{ github.ref_name }} --auto --merge || echo "Auto-merge não pôde ser ativado (pode já estar ativo ou sem permissão)."
