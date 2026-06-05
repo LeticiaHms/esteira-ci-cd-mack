@@ -1,0 +1,47 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Exibir estrutura do projeto
+        run: |
+          echo "Listando arquivos e diretórios:"
+          ls -R
+
+      - name: Validar existência do arquivo
+        run: |
+          if [ ! -f "site/index.html" ]; then
+            echo "::error::O arquivo site/index.html não foi encontrado!"
+            exit 1
+          fi
+          echo "Arquivo site/index.html validado com sucesso."
+
+      - name: Exibir conteúdo do arquivo
+        run: |
+          echo "Conteúdo do index.html (primeiras 20 linhas):"
+          head -n 20 site/index.html
+
+      - name: Validar Sintaxe HTML (Lint)
+        run: |
+          npx htmlhint site/index.html
+
+      - name: Gerar artefato
+        run: |
+          zip -r site.zip site/
+
+      - name: Publicar artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-build
+          path: site/
+          if-no-files-found: error
