@@ -1,0 +1,35 @@
+name: Auto PR and Merge
+
+on:
+  push:
+    branches:
+      - 'feature/*'
+      - 'fix/*'
+      - 'hotfix/*'
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Criar e configurar Pull Request
+        id: cpr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Tenta criar a PR. Se já existir, o comando falhará mas o script continuará.
+          gh pr create \
+            --title "[Auto PR] Mesclar ${{ github.ref_name }} em main" \
+            --body "Esta é uma Pull Request gerada automaticamente pelo pipeline de CI/CD. Origem: ${{ github.ref_name }} -> Destino: main." \
+            --base main \
+            --head ${{ github.ref_name }} \
+            --label "automated pr,automerge" || echo "PR já existe ou não pôde ser criada."
+
+          # Ativa o auto-merge para a PR desta branch
+          gh pr merge ${{ github.ref_name }} --auto --merge || echo "Auto-merge não pôde ser ativado."
