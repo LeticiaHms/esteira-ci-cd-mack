@@ -1,43 +1,54 @@
 # Esteira CI/CD Automatizada - Projeto DevOps
 
-Este repositório contém uma esteira completa de **Integração Contínua (CI)**, **Automação de Processos** e **Entrega Contínua (CD)**.
+Este repositório contém uma esteira completa de **Integração Contínua (CI)**, **Automação de Processos** e **Entrega Contínua (CD)** projetada para garantir qualidade e agilidade no deploy.
 
 ## 🏗️ Arquitetura da Esteira
 
-O pipeline está dividido em três fases lógicas para garantir organização e visibilidade:
+O pipeline está dividido em três fases lógicas e numeradas para máxima visibilidade:
 
 ### 1. 🛡️ Integração Contínua (CI)
-*   **Frequência**: Disparado em cada push para `main` ou Pull Requests.
-*   **Ações**: Valida estrutura de arquivos, executa Linting de HTML (qualidade de código) e gera artefatos de build.
+*   **Frequência**: Disparado em cada `push` para branches de trabalho (`feature/*`, `fix/*`, etc.) e na branch `main`.
+*   **Ações**: 
+    *   Validação de estrutura de arquivos.
+    *   Execução de **Linting (HTMLHint)** para garantir a qualidade do código.
+    *   Geração de artefatos de build seguros.
 
 ### 2. 🤖 Automação de PR & Merge
-*   **Frequência**: Disparado ao criar branches do tipo `feature/*`, `fix/*` ou `hotfix/*`.
-*   **Ações**: Cria automaticamente uma Pull Request para a `main` e ativa o **Auto-Merge**. 
-*   **Vantagem**: O desenvolvedor foca no código, e a esteira cuida da burocracia do GitHub.
+*   **Frequência**: Disparado em pushes para branches `feature/*`, `fix/*` ou `hotfix/*`.
+*   **Ações**: 
+    *   Criação automática de Pull Request (PR) para a branch `main`.
+    *   Ativação de **Auto-Merge** (caso habilitado no repositório).
+    *   Geração de um **Job Summary** visual na aba Actions com o link da PR.
 
 ### 3. 🚀 Entrega Contínua (CD)
-*   **Frequência**: Disparado automaticamente após o sucesso da fase de CI.
-*   **Ações**: Realiza o deploy automático do site validado para o **GitHub Pages**.
+*   **Frequência**: Disparado automaticamente após a conclusão bem-sucedida do CI na branch `main`.
+*   **Ações**: 
+    *   Download do artefato validado.
+    *   Deploy automatizado para o **GitHub Pages**.
 
 ## 📂 Estrutura do Projeto
 
 ```text
-esteira-ci-cd/
-├── site/               # Código fonte do site estático
+esteira-ci-cd-mack/
+├── site/               # Código fonte (HTML/CSS)
 ├── .github/
-│   └── workflows/      # Definições dos pipelines
-│       ├── ci.yml              # Fase 1: Validação e Build
+│   └── workflows/      
+│       ├── ci.yml              # Fase 1: Integração Contínua
 │       ├── automation-pr.yml   # Fase 2: Automação de PR
-│       └── cd.yml              # Fase 3: Deploy para Produção
-└── README.md           # Documentação
+│       └── cd.yml              # Fase 3: Deploy (CD)
+└── README.md           # Documentação do Projeto
 ```
 
-## 🛠️ Configuração Necessária
+## 🛠️ Configurações Necessárias (Checklist)
 
-Para que a automação funcione 100%, verifique:
-1.  **Settings > Actions > General**: Habilite *"Allow GitHub Actions to create and approve pull requests"*.
-2.  **Settings > Pages**: Mude o *Source* para *"GitHub Actions"*.
-3.  **Settings > General**: Habilite *"Allow auto-merge"*.
+Para que todas as automações funcionem corretamente, certifique-se de configurar seu repositório no GitHub:
+
+1.  **Habilitar PRs via Actions**:
+    *   `Settings > Actions > General` -> Marque *"Allow GitHub Actions to create and approve pull requests"*.
+2.  **Habilitar Auto-Merge**:
+    *   `Settings > General` -> Na seção Pull Requests, marque *"Allow auto-merge"*.
+3.  **Configurar Origem do Pages**:
+    *   `Settings > Pages` -> Em *Build and deployment > Source*, selecione **"GitHub Actions"**.
 
 ---
 Projeto desenvolvido para fins educacionais em DevOps.
